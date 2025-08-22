@@ -15,21 +15,22 @@ class UserController extends Controller
     public function updateProfile(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email,' . Auth::id(),
+            'name' => 'string|max:100',
         ]);
 
-        $user = Auth::user();
-        User::where('id', $user->id)->update([
+        $user = User::find(Auth::id());
+        $user->update([
             'name' => $request->name,
-            'email' => $request->email
         ]);
+
+        $user->refresh();
 
         return response()->json([
             'message' => 'Profile updated successfully',
             'user' => $user
         ]);
     }
+
 
     public function sendResetPasswordLink(Request $request)
     {
