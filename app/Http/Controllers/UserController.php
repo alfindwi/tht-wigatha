@@ -48,9 +48,17 @@ class UserController extends Controller
             ['token' => $token, 'created_at' => now()]
         );
 
-        Mail::send('emails.reset-password', ['token' => $token], function ($message) use ($user) {
-            $message->to($user->email);
-            $message->subject('Reset Password Request');
+        $resetUrl = "http://localhost:5173/reset-password?token=" . $token;
+
+        $html = "
+        <h1>Reset Password Request</h1>
+        <p>Klik link di bawah untuk reset password kamu:</p>
+        <a href='{$resetUrl}'>Reset Password</a>
+    ";
+
+        Mail::html($html, function ($message) use ($user) {
+            $message->to($user->email)
+                ->subject('Reset Password Request');
         });
 
         return response()->json(['message' => 'Reset password link sent to email']);
